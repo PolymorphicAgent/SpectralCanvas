@@ -2,7 +2,9 @@
 
 AudioFile::AudioFile(QObject *parent)
     : QObject{parent}, m_decoder(new QAudioDecoder(this))
-{}
+{
+    connectSignals();
+}
 
 // Copy Constructor
 AudioFile::AudioFile(const AudioFile &other)
@@ -10,7 +12,9 @@ AudioFile::AudioFile(const AudioFile &other)
       m_fileData(other.m_fileData),
       m_filePath(other.m_filePath),
       m_decoder(other.m_decoder)
-{}
+{
+    connectSignals();
+}
 
 // Initializer Constructor
 AudioFile::AudioFile(QByteArray *data, QString filePath, QObject *parent)
@@ -18,7 +22,19 @@ AudioFile::AudioFile(QByteArray *data, QString filePath, QObject *parent)
       m_fileData(data),
       m_filePath(filePath),
       m_decoder(new QAudioDecoder(this))
-{}
+{
+    connectSignals();
+}
+
+void AudioFile::connectSignals(){
+    connect(m_decoder, SIGNAL(bufferReady()), this, SIGNAL(bufferReady()));
+    connect(m_decoder, SIGNAL(finished()), this, SIGNAL(decodeFinished()));
+    connect(m_decoder, QOverload<QAudioDecoder::Error>::of(&QAudioDecoder::error), this,
+            [=](QAudioDecoder::Error error){
+        Q_UNUSED(error);
+        emit decodeError(m_decoder->errorString());
+    });
+}
 
 // Getters
 QByteArray *AudioFile::fileData() {
@@ -40,7 +56,7 @@ void AudioFile::setFilePath(QString file) {
 
 // Other public functions
 // Decodes the audio file using QAudioDecoder
-bool AudioFile::decode() {
+bool AudioFile::startDecode() {
 
     // Check if we have file data
     if (!m_fileData || m_fileData->isEmpty()) {
@@ -52,4 +68,15 @@ bool AudioFile::decode() {
     m_decoder->setSourceDevice(new QBuffer(m_fileData, this));
     m_decoder->start();
 
+    return true;
+}
+
+bool AudioFile::bufferAvailable() {
+    if(!m_decoder) return false;
+    return m_decoder->bufferAvailable();
+}
+
+QAudioBuffer* AudioFile::readBuffer(){
+    if(!m_decoder) return nullptr;
+    return new QAudioBuffer(m_decoder->read());
 }

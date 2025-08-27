@@ -30,11 +30,23 @@ public:
     // Other public functions
 
     // Decodes the audio file using QAudioDecoder
-    bool decode();
+    bool startDecode();
+
+    // Checks if a buffer is available to be read from the decoder
+    bool bufferAvailable();
+
+    // Reads the audio buffer from the decoder. You should either respond to the bufferReady() signal or check the bufferAvailable() function before calling.
+    QAudioBuffer* readBuffer();
 
 signals:
+    void decodeError(QString error);
+    void bufferReady();
+    void decodeFinished();
 
 private:
+    // Should be called in each constructor
+    void connectSignals();
+
     QByteArray *m_fileData;
     QString m_filePath;
 
