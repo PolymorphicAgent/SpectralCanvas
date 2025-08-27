@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "audiofile.h"
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -17,7 +19,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void loadAudioSlot();
+
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow *m_ui;
+
+    AudioFile *m_file;
 };
 #endif // MAINWINDOW_H

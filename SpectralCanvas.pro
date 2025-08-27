@@ -9,16 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    main.cpp \
-    mainwindow.cpp
+    src/progressmessagebox.cpp \
+    src/audiofile.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h
+    src/progressmessagebox.h \
+    src/audiofile.h \
+    src/mainwindow.h
 
 FORMS += \
-    mainwindow.ui
+    ui/mainwindow.ui
 
-DISTFILES +=
+DISTFILES += \
+    todo.txt \
     README.md
 
 # Default rules for deployment.
