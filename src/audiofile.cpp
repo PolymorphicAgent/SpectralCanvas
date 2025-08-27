@@ -28,12 +28,56 @@ AudioFile::AudioFile(QByteArray *data, QString filePath, QObject *parent)
 
 void AudioFile::connectSignals(){
     connect(m_decoder, SIGNAL(bufferReady()), this, SIGNAL(bufferReady()));
-    connect(m_decoder, SIGNAL(finished()), this, SIGNAL(decodeFinished()));
     connect(m_decoder, QOverload<QAudioDecoder::Error>::of(&QAudioDecoder::error), this,
             [=](QAudioDecoder::Error error){
         Q_UNUSED(error);
+
+        qDebug()<<"Decoder error:"<<m_decoder->errorString();
+
+        // Close the progress message box
+        if(m_progressBox){
+            m_progressBox->close();
+            delete m_progressBox;
+            m_progressBox = nullptr;
+        }
+
+        // Emit the error signal
         emit decodeError(m_decoder->errorString());
     });
+
+    // The private connections
+    connect(m_decoder, SIGNAL(positionChanged(qint64)), this, SLOT(onDecoderPositionChange(qint64)));
+    connect(m_decoder, SIGNAL(finished()), this, SLOT(onDecodeFinished()));
+}
+
+void AudioFile::onDecoderPositionChange(qint64 position){
+
+    qDebug() << "Decoder position changed:" << position;
+
+    // Get the duration of the audio
+    qint64 duration = m_decoder->duration();
+    if(duration <= 0) return; // Prevent division by zero
+
+    // Calculate the decoding progress
+    int progress = static_cast<int>(position / duration) * 100;
+
+    // Update the progress message box
+    if(m_progressBox) m_progressBox->setProgress(0, progress);
+
+}
+
+void AudioFile::onDecodeFinished(){
+    qDebug() << "Audio decoding finished.";
+
+    // Close the progress message box
+    if(m_progressBox){
+        m_progressBox->setProgress(0, 100);
+        m_progressBox->close();
+        delete m_progressBox;
+        m_progressBox = nullptr;
+    }
+
+    emit decodeFinished();
 }
 
 // Getters
@@ -57,6 +101,7 @@ void AudioFile::setFilePath(QString file) {
 // Other public functions
 // Decodes the audio file using QAudioDecoder
 bool AudioFile::startDecode() {
+    qDebug() << "Starting audio decode for file:" << m_filePath;
 
     // Check if we have file data
     if (!m_fileData || m_fileData->isEmpty()) {
@@ -66,7 +111,15 @@ bool AudioFile::startDecode() {
 
     // Set up the decoder
     m_decoder->setSourceDevice(new QBuffer(m_fileData, this));
+
+    // Set up the progress message box
+    m_progressBox = new ProgressMessageBox("Decoding Audio...", {"Decoding audio file..."});
+
+    // Start decoding
     m_decoder->start();
+
+    // Execute the progres message box
+    m_progressBox->exec();
 
     return true;
 }

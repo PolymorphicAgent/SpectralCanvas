@@ -1,4 +1,4 @@
-QT       += core gui multimedia
+QT       += core gui multimedia quick quickwidgets svg
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -44,4 +44,7 @@ FFTW_DLL_PATH = $$PWD/libs/fftw-3.3.10/bin/libfftw3l-3.dll
 
 win32: QMAKE_POST_LINK += cmd /c copy /Y \"$$replace(FFTW_DLL_PATH, /, \\)\" \"$$replace(OUT_PWD, /, \\)\"
 else: QMAKE_POST_LINK += cp \"$$FFTW_DLL_PATH\" \"$$OUT_PWD/\"; echo DLL copied
+
+RESOURCES += \
+    resources/resources.qrc
 

@@ -1,6 +1,8 @@
 #ifndef AUDIOFILE_H
 #define AUDIOFILE_H
 
+#include "progressmessagebox.h"
+
 #include <QAudioDecoder>
 #include <QObject>
 #include <QBuffer>
@@ -51,6 +53,12 @@ private:
     QString m_filePath;
 
     QAudioDecoder *m_decoder;
+
+    ProgressMessageBox *m_progressBox;
+
+private slots:
+    void onDecoderPositionChange(qint64 position);
+    void onDecodeFinished();
 };
 
 #endif // AUDIOFILE_H

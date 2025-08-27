@@ -47,4 +47,7 @@ void MainWindow::loadAudioSlot(){
     //observe the niceties (close the file)
     file.close();
 
+    //start decoding the audio file
+    m_file->startDecode();
+
 }
