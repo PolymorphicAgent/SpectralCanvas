@@ -1,4 +1,4 @@
-QT       += core gui multimedia quick quickwidgets svg
+QT       += core gui multimedia quick quickwidgets svg qml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,8 @@ FORMS += \
 
 DISTFILES += \
     todo.txt \
-    README.md
+    README.md \
+    resources/spinner.qml
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

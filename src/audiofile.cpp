@@ -27,7 +27,11 @@ AudioFile::AudioFile(QByteArray *data, QString filePath, QObject *parent)
 }
 
 void AudioFile::connectSignals(){
-    connect(m_decoder, SIGNAL(bufferReady()), this, SIGNAL(bufferReady()));
+    connect(m_decoder, &QAudioDecoder::bufferReady, this, [this](){
+        QAudioBuffer b = m_decoder->read();
+        Q_UNUSED(b);
+        emit bufferReady();
+    });
     connect(m_decoder, QOverload<QAudioDecoder::Error>::of(&QAudioDecoder::error), this,
             [=](QAudioDecoder::Error error){
         Q_UNUSED(error);
@@ -52,14 +56,14 @@ void AudioFile::connectSignals(){
 
 void AudioFile::onDecoderPositionChange(qint64 position){
 
-    qDebug() << "Decoder position changed:" << position;
+    //qDebug() << "Decoder position changed:" << position;
 
     // Get the duration of the audio
     qint64 duration = m_decoder->duration();
     if(duration <= 0) return; // Prevent division by zero
 
     // Calculate the decoding progress
-    int progress = static_cast<int>(position / duration) * 100;
+    int progress = static_cast<int>((static_cast<double>(position) / duration) * 100.0);
 
     // Update the progress message box
     if(m_progressBox) m_progressBox->setProgress(0, progress);
@@ -78,6 +82,11 @@ void AudioFile::onDecodeFinished(){
     }
 
     emit decodeFinished();
+}
+
+bool AudioFile::isDecoding() {
+    if(!m_decoder) return false;
+    return m_decoder->isDecoding();
 }
 
 // Getters

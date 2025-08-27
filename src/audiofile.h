@@ -37,6 +37,9 @@ public:
     // Checks if a buffer is available to be read from the decoder
     bool bufferAvailable();
 
+    // Checks if the decoder is currently decoding
+    bool isDecoding();
+
     // Reads the audio buffer from the decoder. You should either respond to the bufferReady() signal or check the bufferAvailable() function before calling.
     QAudioBuffer* readBuffer();
 

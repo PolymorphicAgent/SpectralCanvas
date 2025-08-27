@@ -50,6 +50,19 @@
      <enum>Qt::Orientation::Vertical</enum>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>300</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>debug</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -57,7 +70,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>16</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -22,6 +22,9 @@ public:
 public slots:
     void loadAudioSlot();
 
+private slots:
+    void on_pushButton_pressed();
+
 private:
     Ui::MainWindow *m_ui;
 

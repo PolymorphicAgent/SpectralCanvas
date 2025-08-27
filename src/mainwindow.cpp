@@ -51,3 +51,13 @@ void MainWindow::loadAudioSlot(){
     m_file->startDecode();
 
 }
+
+void MainWindow::on_pushButton_pressed()
+{
+    if(!m_file) {
+        qDebug()<<"No file loaded";
+        return;
+    }
+    qDebug()<<m_file->isDecoding();
+}
+
