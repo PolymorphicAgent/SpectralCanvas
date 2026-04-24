@@ -19,14 +19,12 @@ public:
     explicit AudioFile(const AudioFile &other);
 
     // Initializer Constructor
-    explicit AudioFile(QByteArray *data, QString filePath, QObject *parent = nullptr);
+    explicit AudioFile(QString filePath, QAudioFormat fmt, QObject *parent = nullptr);
 
     // Getters
-    QByteArray *fileData();
     QString filePath();
 
     // Setters
-    void setFileData(QByteArray*);
     void setFilePath(QString);
 
     // Other public functions
@@ -52,16 +50,21 @@ private:
     // Should be called in each constructor
     void connectSignals();
 
-    QByteArray *m_fileData;
+    QVector<long double> m_processedAudio;
     QString m_filePath;
+    QByteArray *m_fileData;
 
     QAudioDecoder *m_decoder;
 
     ProgressMessageBox *m_progressBox;
 
+    // This member describes the audio format
+    QAudioFormat m_audioFormat;
+
 private slots:
     void onDecoderPositionChange(qint64 position);
     void onDecodeFinished();
+    void onBufferReady();
 };
 
 #endif // AUDIOFILE_H

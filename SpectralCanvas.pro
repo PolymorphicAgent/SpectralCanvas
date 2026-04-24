@@ -25,7 +25,8 @@ FORMS += \
 DISTFILES += \
     todo.txt \
     README.md \
-    resources/spinner.qml
+    resources/spinner.qml \
+    resources/PCM-Cheat-Sheet.pdf
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

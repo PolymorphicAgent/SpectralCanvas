@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     m_ui->setupUi(this);
     connect(m_ui->actionLoad, &QAction::triggered, this, &MainWindow::loadAudioSlot);
+    connect(m_ui->pushButton, &QPushButton::pressed, this, &MainWindow::onDebug);
     m_file = nullptr;
 }
 
@@ -31,28 +32,21 @@ void MainWindow::loadAudioSlot(){
     //if they don't select anything, don't do anything
     if(r.isEmpty()) return;
 
-    //attempt to open the file
-    QFile file = QFile(r[0]);
-    file.open(QIODevice::ReadOnly);
-
-    //notify the user if the file cannot be opened
-    if(!file.isOpen()){
-        QMessageBox::critical(this, "Error", "Unable to open file!");
-        return;
-    }
+    //set up the audio format
+    QAudioFormat fmt;
+    fmt.setChannelCount(2);
+    fmt.setSampleFormat(QAudioFormat::Int32);
+    fmt.setSampleRate(48000);
 
     //read the file and create a new AudioFile object
-    m_file = new AudioFile(new QByteArray(file.readAll()), r[0], this);
-
-    //observe the niceties (close the file)
-    file.close();
+    m_file = new AudioFile(r[0], fmt, this);
 
     //start decoding the audio file
     m_file->startDecode();
 
 }
 
-void MainWindow::on_pushButton_pressed()
+void MainWindow::onDebug()
 {
     if(!m_file) {
         qDebug()<<"No file loaded";
